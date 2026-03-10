@@ -4,14 +4,81 @@ import HushhAgentCTA from "../../../components/HushhAgentCTA";
 import HushhAgentFooter from "../../../components/HushhAgentFooter";
 import { useGoalsViewModel } from "./GoalsViewModel";
 
-/** Goal icons */
-const GOAL_ICONS: Record<string, string> = {
-  retirement: "🏖️",
-  investment: "📈",
-  insurance: "🛡️",
-  estate: "🏠",
-  tax: "📋",
-  business: "💼",
+/** Duo-tone filled SVG icons for goals */
+function RetirementIcon({ className = "w-6 h-6" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="10" fill="currentColor" fillOpacity="0.15" />
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="currentColor" fillOpacity="0.2" />
+      <path d="M15.5 11l-4-7L7 11h2v5h5v-5h1.5z" fill="currentColor" />
+      <circle cx="11.5" cy="6" r="1.5" fill="currentColor" />
+      <path d="M6 17h12v1.5H6z" fill="currentColor" fillOpacity="0.5" />
+    </svg>
+  );
+}
+
+function InvestmentIcon({ className = "w-6 h-6" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none">
+      <rect x="2" y="3" width="20" height="18" rx="3" fill="currentColor" fillOpacity="0.15" />
+      <path d="M4 18l4-5 3 3 5-7 4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M15 7h5v5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function InsuranceIcon({ className = "w-6 h-6" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none">
+      <path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3z" fill="currentColor" fillOpacity="0.2" />
+      <path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3z" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function EstateIcon({ className = "w-6 h-6" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none">
+      <path d="M3 21V10l9-7 9 7v11H3z" fill="currentColor" fillOpacity="0.2" />
+      <path d="M3 21V10l9-7 9 7v11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <rect x="9" y="14" width="6" height="7" rx="0.5" fill="currentColor" fillOpacity="0.5" stroke="currentColor" strokeWidth="1" />
+      <path d="M3 21h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function TaxIcon({ className = "w-6 h-6" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none">
+      <rect x="4" y="2" width="16" height="20" rx="2" fill="currentColor" fillOpacity="0.15" />
+      <rect x="4" y="2" width="16" height="20" rx="2" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M8 7h8M8 11h8M8 15h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <circle cx="16" cy="16" r="3" fill="currentColor" fillOpacity="0.3" stroke="currentColor" strokeWidth="1" />
+      <path d="M16 14.5v3M14.5 16h3" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function BusinessIcon({ className = "w-6 h-6" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none">
+      <rect x="2" y="7" width="20" height="14" rx="2" fill="currentColor" fillOpacity="0.2" />
+      <rect x="2" y="7" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M2 12h20" stroke="currentColor" strokeWidth="1.5" />
+      <rect x="10" y="10" width="4" height="4" rx="1" fill="currentColor" />
+    </svg>
+  );
+}
+
+const GOAL_ICON_COMPONENTS: Record<string, React.FC<{ className?: string }>> = {
+  retirement: RetirementIcon,
+  investment: InvestmentIcon,
+  insurance: InsuranceIcon,
+  estate: EstateIcon,
+  tax: TaxIcon,
+  business: BusinessIcon,
 };
 
 export default function GoalsView() {
@@ -83,7 +150,14 @@ export default function GoalsView() {
                         : "bg-white/5 border-white/10 text-white/60 hover:border-white/30 hover:text-white"
                     }`}
                   >
-                    <span className="text-xl">{GOAL_ICONS[chip.icon] || "📌"}</span>
+                    {(() => {
+                      const IconComp = GOAL_ICON_COMPONENTS[chip.icon];
+                      return IconComp ? (
+                        <IconComp className={`w-6 h-6 flex-shrink-0 ${selected ? "text-brand-primary" : "text-white/40"}`} />
+                      ) : (
+                        <span className="w-6 h-6 flex-shrink-0" />
+                      );
+                    })()}
                     <span className="flex-1">{chip.label}</span>
                     {selected && (
                       <svg className="w-4 h-4 text-brand-primary flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
