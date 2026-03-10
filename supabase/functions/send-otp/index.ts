@@ -98,9 +98,7 @@ function otpEmailHTML(otp: string): string {
   return `
     <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 480px; margin: 0 auto; background: #0a0a0a; border-radius: 16px; overflow: hidden; border: 1px solid #222;">
       <div style="padding: 40px 32px; text-align: center;">
-        <div style="width: 48px; height: 48px; background: #ff5864; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 24px;">
-          <span style="color: #0a0a0a; font-weight: 900; font-size: 24px;">H</span>
-        </div>
+        <img src="https://raw.githubusercontent.com/ankitkumarsingh1702/hushh-agents-clean/main/apps/web/public/assets/hushhlogo.jpg" alt="Hushh Agents" style="width: 56px; height: 56px; border-radius: 12px; object-fit: cover; margin-bottom: 24px;" />
         <h1 style="color: #ffffff; font-size: 24px; margin: 0 0 8px;">Your Verification Code</h1>
         <p style="color: #999; font-size: 14px; margin: 0 0 32px;">Enter this code to sign in to Hushh Agents</p>
         <div style="background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 24px; margin-bottom: 32px;">
