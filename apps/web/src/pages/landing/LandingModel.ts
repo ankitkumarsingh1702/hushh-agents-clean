@@ -11,9 +11,8 @@ export interface CityInfo {
   label: string;
 }
 
-export interface TrustBadge {
+export interface TrustChip {
   label: string;
-  icon: "shield" | "star";
 }
 
 /** Static agent card images for the hero background grid */
@@ -46,24 +45,24 @@ export function getCityInfo(): CityInfo {
   };
 }
 
-/** Get trust badges */
-export function getTrustBadges(): TrustBadge[] {
+/** Get trust chips */
+export function getTrustChips(): TrustChip[] {
   return [
-    { label: "Verified Credentials", icon: "shield" },
-    { label: "Top Rated Pros", icon: "star" },
+    { label: "Verified businesses" },
+    { label: "Local to Kirkland" },
+    { label: "Secure messaging" },
+    { label: "Response-aware" },
   ];
 }
 
 /** Hero content */
 export function getHeroContent() {
   return {
-    headline: {
-      line1: { bold: "Find Your", italic: "Ideal" },
-      line2: { bold: "Insurance Match", italic: "in Kirkland." },
-    },
+    eyebrow: "Licensed advisors. Fast discovery.",
+    headline: "Find the right advisor in minutes.",
     subheadline:
-      "Swipe through top-rated local agents. Trust-first discovery, tailored for you. Professional expertise meet seamless experience.",
-    ctaLabel: "Create Account",
-    trustLabel: "Licensed Kirkland Insurance Agents",
+      "Browse verified Kirkland-area financial and insurance professionals matched to your goals, communication style, and location.",
+    ctaLabel: "Continue with work email",
+    secondaryCta: "Browse sample profiles",
   };
 }

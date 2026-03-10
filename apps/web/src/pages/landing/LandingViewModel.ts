@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
   getAgentCards,
   getCityInfo,
-  getTrustBadges,
+  getTrustChips,
   getHeroContent,
 } from "./LandingModel";
 
@@ -12,10 +12,10 @@ export function useLandingViewModel() {
   const navigate = useNavigate();
   const agentCards = useMemo(() => getAgentCards(), []);
   const cityInfo = useMemo(() => getCityInfo(), []);
-  const trustBadges = useMemo(() => getTrustBadges(), []);
+  const trustChips = useMemo(() => getTrustChips(), []);
   const heroContent = useMemo(() => getHeroContent(), []);
 
-  const onCreateAccount = useCallback(() => {
+  const onContinue = useCallback(() => {
     navigate("/login");
   }, [navigate]);
 
@@ -23,12 +23,18 @@ export function useLandingViewModel() {
     navigate("/login");
   }, [navigate]);
 
+  const onBrowseProfiles = useCallback(() => {
+    // TODO: Navigate to sample profiles page
+    console.log("Browse sample profiles clicked");
+  }, []);
+
   return {
     agentCards,
     cityInfo,
-    trustBadges,
+    trustChips,
     heroContent,
-    onCreateAccount,
+    onContinue,
     onLogin,
+    onBrowseProfiles,
   };
 }
