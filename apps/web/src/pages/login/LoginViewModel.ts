@@ -87,7 +87,7 @@ export function useLoginViewModel() {
       trackEvent("otp_requested", { email: email.trim() });
 
       // Navigate to verify page
-      navigate("/verify", { state: { email: email.trim() } });
+      navigate("/login/verify", { state: { email: email.trim() } });
     } catch (err: unknown) {
       setError((err as Error).message || "Something went wrong");
     } finally {
