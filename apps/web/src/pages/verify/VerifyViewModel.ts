@@ -126,6 +126,9 @@ export function useVerifyViewModel() {
 
         trackEvent("auth_success", { email });
         trackEvent("session_created");
+
+        // Persist email for onboarding flow
+        localStorage.setItem("hushh_user_email", email);
         setSuccess(true);
 
         // Brief success state then navigate to S4 Welcome

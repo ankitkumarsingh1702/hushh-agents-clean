@@ -23,13 +23,29 @@ export function useWelcomeViewModel() {
     trackEvent("consent_viewed");
   }, []);
 
-  /** Continue → next onboarding step (S5 Profile Setup) */
-  const onContinue = useCallback(() => {
+  /** Continue → save consent then navigate to S5 Profile Setup */
+  const onContinue = useCallback(async () => {
     trackEvent("continue_welcome");
     trackEvent("consent_accepted", { policy_version: "1.0" });
 
-    // TODO: POST /consents API call here
-    // For now, navigate to next step
+    // Get email from localStorage (set during login flow)
+    const email = localStorage.getItem("hushh_user_email") || "";
+
+    // POST /consents
+    try {
+      await fetch("https://gsqmwxqgqrgzhlhmbscg.supabase.co/functions/v1/save-consent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          policy_version: "1.0",
+          consent_types: ["terms", "privacy", "messaging"],
+        }),
+      });
+    } catch (err) {
+      console.error("Consent save failed (non-blocking):", err);
+    }
+
     navigate("/onboarding/profile");
   }, [navigate]);
 

@@ -81,9 +81,28 @@ export function useProfileViewModel() {
     setErrors({});
 
     try {
-      // TODO: POST /me/profile API call
-      // For now just simulate
-      await new Promise((r) => setTimeout(r, 600));
+      // Get email from localStorage
+      const email = localStorage.getItem("hushh_user_email") || "";
+
+      // POST /me/profile
+      const res = await fetch("https://gsqmwxqgqrgzhlhmbscg.supabase.co/functions/v1/save-profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          first_name: form.firstName,
+          last_name: form.lastName,
+          role: form.role,
+          zip_code: form.zipCode,
+          preferred_contact: form.contactMethod,
+          avatar_url: form.avatarUrl,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to save profile");
+      }
 
       trackEvent("profile_saved", {
         role: form.role,
