@@ -19,7 +19,7 @@ export default function LoginView() {
   } = useLoginViewModel();
 
   return (
-    <div className="bg-brand-dark text-white font-sans antialiased overflow-x-hidden min-h-screen">
+    <div className="bg-brand-dark text-white font-sans antialiased overflow-x-hidden min-h-screen flex flex-col">
       {/* Header — Back arrow + "Sign in" center title */}
       <header className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between bg-transparent">
         {/* Left: Back arrow */}
@@ -43,7 +43,7 @@ export default function LoginView() {
       </header>
 
       {/* Main Content */}
-      <main className="relative min-h-screen flex flex-col items-center justify-center pt-24 pb-20 px-4 sm:px-6">
+      <main className="flex-1 relative flex flex-col items-center justify-center pt-24 pb-10 px-4 sm:px-6">
         <div className="w-full max-w-md">
           {/* Logo */}
           <div className="flex justify-center mb-8 sm:mb-10">
