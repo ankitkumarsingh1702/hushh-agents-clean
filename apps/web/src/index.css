@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #ff5864;
+  --color-primary-dark: #0a0a0a;
+}
+
+body {
+  font-family: "Manrope", sans-serif;
+}
+
+/* ── Hero Background: Perspective card grid ── */
+.hero-background-container {
+  perspective: 1000px;
+  overflow: hidden;
+}
+
+.card-grid {
+  transform: rotateX(20deg) rotateZ(-10deg) skewX(5deg);
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  width: 120%;
+  margin-left: -10%;
+  margin-top: -5%;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.agent-card-mock {
+  aspect-ratio: 3/4;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
