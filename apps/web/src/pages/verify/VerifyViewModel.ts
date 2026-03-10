@@ -128,10 +128,9 @@ export function useVerifyViewModel() {
         trackEvent("session_created");
         setSuccess(true);
 
-        // Brief success state then navigate
+        // Brief success state then navigate to S4 Welcome
         setTimeout(() => {
-          // TODO: Route to S4 Trust & Consent or deck based on onboarding_status
-          navigate("/", { replace: true });
+          navigate("/onboarding/welcome", { replace: true });
         }, 2000);
       } catch (err: unknown) {
         trackEvent("auth_failed", { email });
