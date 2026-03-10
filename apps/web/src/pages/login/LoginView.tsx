@@ -46,9 +46,11 @@ export default function LoginView() {
         <div className="w-full max-w-md">
           {/* Logo */}
           <div className="flex justify-center mb-8 sm:mb-10">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-brand-primary rounded-custom flex items-center justify-center shadow-lg shadow-[#ff5864]/20">
-              <span className="text-brand-dark font-black text-xl sm:text-2xl">H</span>
-            </div>
+            <img
+              src="/assets/hushhlogo.jpg"
+              alt="Hushh Agents"
+              className="w-12 h-12 sm:w-14 sm:h-14 rounded-custom object-cover shadow-lg shadow-[#ff5864]/20"
+            />
           </div>
 
           {/* Title — uses brand serif heading */}
