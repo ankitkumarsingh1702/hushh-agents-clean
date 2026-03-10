@@ -30,18 +30,18 @@ export function useLandingViewModel() {
     const session = localStorage.getItem("hushh_session");
     if (session) {
       // User has a valid session — bypass landing, route to post-auth state
-      navigate("/login", { replace: true });
+      navigate("/login/email", { replace: true });
     }
   }, [navigate]);
 
   const onContinue = useCallback(() => {
     trackEvent("cta_continue_clicked");
-    navigate("/login");
+    navigate("/login/email");
   }, [navigate]);
 
   const onLogin = useCallback(() => {
     trackEvent("login_clicked");
-    navigate("/login");
+    navigate("/login/email");
   }, [navigate]);
 
   return {

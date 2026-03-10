@@ -21,7 +21,7 @@ export default function VerifyView() {
 
   // Redirect if no email
   useEffect(() => {
-    if (!email) navigate("/login");
+    if (!email) navigate("/login/email");
   }, [email, navigate]);
 
   const handleChange = (index: number, value: string) => {
@@ -140,7 +140,7 @@ export default function VerifyView() {
         <div className="w-full max-w-md">
           {/* Back button */}
           <button
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/login/email")}
             className="flex items-center gap-2 text-white/50 hover:text-white mb-8 transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

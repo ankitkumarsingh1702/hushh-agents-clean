@@ -8,7 +8,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<LandingView />} />
-      <Route path="/login" element={<LoginView />} />
+      <Route path="/login/email" element={<LoginView />} />
       <Route path="/verify" element={<VerifyView />} />
       <Route path="/components" element={<ComponentLibraryView />} />
     </Routes>
