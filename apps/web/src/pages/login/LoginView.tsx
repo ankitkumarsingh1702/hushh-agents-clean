@@ -2,6 +2,7 @@ import HushhAgentHeading from "../../components/HushhAgentHeading";
 import HushhAgentText from "../../components/HushhAgentText";
 import HushhAgentCTA from "../../components/HushhAgentCTA";
 import HushhAgentFooter from "../../components/HushhAgentFooter";
+import HushhAgentLogo from "../../components/HushhAgentLogo";
 import { useLoginViewModel } from "./LoginViewModel";
 
 export default function LoginView() {
@@ -46,11 +47,7 @@ export default function LoginView() {
         <div className="w-full max-w-md">
           {/* Logo */}
           <div className="flex justify-center mb-8 sm:mb-10">
-            <img
-              src="/assets/hushhlogo.jpg"
-              alt="Hushh Agents"
-              className="w-12 h-12 sm:w-14 sm:h-14 rounded-custom object-cover shadow-lg shadow-[#ff5864]/20"
-            />
+            <HushhAgentLogo size="lg" showGlow />
           </div>
 
           {/* Title — uses brand serif heading */}

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import HushhAgentLogo from "./HushhAgentLogo";
 
 interface HushhAgentHeaderProps {
   onLogin?: () => void;
@@ -9,11 +10,7 @@ export default function HushhAgentHeader({ onLogin }: HushhAgentHeaderProps) {
     <header className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between bg-transparent">
       {/* Logo / Wordmark */}
       <Link to="/" className="flex items-center gap-2">
-        <img
-          src="/assets/hushhlogo.jpg"
-          alt="Hushh"
-          className="w-7 h-7 sm:w-8 sm:h-8 rounded-custom object-cover"
-        />
+        <HushhAgentLogo size="md" />
         <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">Hushh Agents</h1>
       </Link>
 
