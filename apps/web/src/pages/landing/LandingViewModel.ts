@@ -1,4 +1,5 @@
 import { useMemo, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   getAgentCards,
   getCityInfo,
@@ -8,18 +9,19 @@ import {
 
 /** ViewModel hook — connects Model data to the View (no backend) */
 export function useLandingViewModel() {
+  const navigate = useNavigate();
   const agentCards = useMemo(() => getAgentCards(), []);
   const cityInfo = useMemo(() => getCityInfo(), []);
   const trustBadges = useMemo(() => getTrustBadges(), []);
   const heroContent = useMemo(() => getHeroContent(), []);
 
   const onCreateAccount = useCallback(() => {
-    console.log("Create account clicked");
-  }, []);
+    navigate("/login");
+  }, [navigate]);
 
   const onLogin = useCallback(() => {
-    console.log("Login clicked");
-  }, []);
+    navigate("/login");
+  }, [navigate]);
 
   return {
     agentCards,
