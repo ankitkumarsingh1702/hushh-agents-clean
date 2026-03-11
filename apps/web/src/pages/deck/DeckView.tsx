@@ -1,13 +1,25 @@
-/* ── Deck View ── Pixel-perfect Hinge-style card UI ── */
+/* ── Deck View ── Tinder/Hinge-level swipe gestures with framer-motion ── */
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { motion, useMotionValue, useTransform, animate, type PanInfo } from "framer-motion";
 import { useDeckViewModel } from "./DeckViewModel";
 import { useFiltersViewModel } from "./FiltersViewModel";
 import FiltersSheet from "./FiltersSheet";
 import DeckTutorialOverlay, { shouldShowTutorial } from "./DeckTutorialOverlay";
 import HushhAgentText from "../../components/HushhAgentText";
 
-/* ── Inline SVG icons ── */
+/* ═══════════════════════════════════════════
+   Constants
+   ═══════════════════════════════════════════ */
+const SWIPE_THRESHOLD = 100;       // px drag to trigger swipe
+const VELOCITY_THRESHOLD = 500;    // px/s velocity to trigger swipe
+const FLY_OFF_DISTANCE = 600;      // px distance for fly-off animation
+const ROTATION_FACTOR = 0.08;      // degrees per px of drag
+const STAMP_OPACITY_FACTOR = 0.008; // opacity per px for stamp
+
+/* ═══════════════════════════════════════════
+   Inline SVG icons
+   ═══════════════════════════════════════════ */
 function XIcon() {
   return (
     <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
@@ -64,12 +76,236 @@ function StarIcon() {
   );
 }
 
+/* ═══════════════════════════════════════════
+   SwipeableCard Component — Tinder-level
+   ═══════════════════════════════════════════ */
+interface SwipeableCardProps {
+  agent: {
+    id: string;
+    name: string;
+    photoUrl: string;
+    category: string;
+    rating: number;
+    reviewCount: number;
+    certified: boolean;
+    messagingEnabled: boolean;
+    locallyOwned: boolean;
+    city: string;
+    state: string;
+    bio: string;
+  };
+  onSwipeLeft: () => void;
+  onSwipeRight: () => void;
+  onViewProfile: () => void;
+  isTop: boolean;
+}
+
+function SwipeableCard({ agent, onSwipeLeft, onSwipeRight, onViewProfile, isTop }: SwipeableCardProps) {
+  const x = useMotionValue(0);
+  const rotate = useTransform(x, [-300, 0, 300], [-ROTATION_FACTOR * 300, 0, ROTATION_FACTOR * 300]);
+  
+  // LIKE stamp opacity (shows when dragging right)
+  const likeOpacity = useTransform(x, [0, SWIPE_THRESHOLD], [0, 1]);
+  // NOPE stamp opacity (shows when dragging left)
+  const nopeOpacity = useTransform(x, [-SWIPE_THRESHOLD, 0], [1, 0]);
+  
+  // Card scale for subtle feedback
+  const scale = useTransform(x, [-300, 0, 300], [0.95, 1, 0.95]);
+  
+  // Background glow color
+  const bgLeft = useTransform(x, [-200, 0], ["rgba(239,68,68,0.15)", "rgba(0,0,0,0)"]);
+  const bgRight = useTransform(x, [0, 200], ["rgba(0,0,0,0)", "rgba(74,222,128,0.15)"]);
+
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleDragEnd = useCallback((_: unknown, info: PanInfo) => {
+    setIsDragging(false);
+    const { offset, velocity } = info;
+    const swipedRight = offset.x > SWIPE_THRESHOLD || velocity.x > VELOCITY_THRESHOLD;
+    const swipedLeft = offset.x < -SWIPE_THRESHOLD || velocity.x < -VELOCITY_THRESHOLD;
+
+    if (swipedRight) {
+      // Fly off right
+      animate(x, FLY_OFF_DISTANCE, {
+        type: "spring",
+        stiffness: 300,
+        damping: 30,
+        onComplete: onSwipeRight,
+      });
+    } else if (swipedLeft) {
+      // Fly off left
+      animate(x, -FLY_OFF_DISTANCE, {
+        type: "spring",
+        stiffness: 300,
+        damping: 30,
+        onComplete: onSwipeLeft,
+      });
+    } else {
+      // Bounce back
+      animate(x, 0, {
+        type: "spring",
+        stiffness: 500,
+        damping: 25,
+        mass: 0.8,
+      });
+    }
+  }, [x, onSwipeLeft, onSwipeRight]);
+
+  const ratingDisplay = agent.rating > 0 ? agent.rating.toFixed(1) : null;
+
+  if (!isTop) {
+    // Background card — slightly scaled down, no interaction
+    return (
+      <div className="absolute inset-0 rounded-2xl overflow-hidden scale-[0.97] opacity-70">
+        <img
+          src={agent.photoUrl}
+          alt={agent.name}
+          className="absolute inset-0 w-full h-full object-cover"
+          onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+            (e.target as HTMLImageElement).src =
+              `https://ui-avatars.com/api/?name=${encodeURIComponent(agent.name)}&size=600&background=1a1a2e&color=fff&font-size=0.33&bold=true`;
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+      </div>
+    );
+  }
+
+  return (
+    <motion.div
+      className="absolute inset-0 rounded-2xl overflow-hidden cursor-grab active:cursor-grabbing touch-none"
+      style={{ x, rotate, scale }}
+      drag="x"
+      dragConstraints={{ left: 0, right: 0 }}
+      dragElastic={0.9}
+      onDragStart={() => setIsDragging(true)}
+      onDragEnd={handleDragEnd}
+      whileTap={{ cursor: "grabbing" }}
+    >
+      {/* Photo */}
+      <img
+        src={agent.photoUrl}
+        alt={agent.name}
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
+        draggable={false}
+        onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+          (e.target as HTMLImageElement).src =
+            `https://ui-avatars.com/api/?name=${encodeURIComponent(agent.name)}&size=600&background=1a1a2e&color=fff&font-size=0.33&bold=true`;
+        }}
+      />
+
+      {/* Gradient */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none" />
+
+      {/* ═══ LIKE Stamp (Green, right side) ═══ */}
+      <motion.div
+        className="absolute top-8 left-6 z-20 pointer-events-none"
+        style={{ opacity: likeOpacity }}
+      >
+        <div className="border-[4px] border-green-400 rounded-lg px-4 py-2 -rotate-[20deg]">
+          <span className="text-green-400 text-[36px] font-extrabold tracking-wider leading-none">
+            LIKE
+          </span>
+        </div>
+      </motion.div>
+
+      {/* ═══ NOPE Stamp (Red, left side) ═══ */}
+      <motion.div
+        className="absolute top-8 right-6 z-20 pointer-events-none"
+        style={{ opacity: nopeOpacity }}
+      >
+        <div className="border-[4px] border-red-400 rounded-lg px-4 py-2 rotate-[20deg]">
+          <span className="text-red-400 text-[36px] font-extrabold tracking-wider leading-none">
+            NOPE
+          </span>
+        </div>
+      </motion.div>
+
+      {/* ═══ Edge glow overlays ═══ */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none z-10 rounded-2xl"
+        style={{ background: bgLeft }}
+      />
+      <motion.div
+        className="absolute inset-0 pointer-events-none z-10 rounded-2xl"
+        style={{ background: bgRight }}
+      />
+
+      {/* ── Bottom info overlay ── */}
+      <div className="absolute bottom-0 left-0 right-0 px-4 pb-4 z-30">
+
+        {/* Active badge */}
+        <div className="mb-2">
+          <span className="inline-block bg-green-500 text-white text-[10px] font-bold px-2.5 py-[3px] rounded-md uppercase tracking-wide">
+            Active
+          </span>
+        </div>
+
+        {/* Name + Rating + Verified */}
+        <div className="flex items-center gap-1.5">
+          <h2 className="text-white text-[32px] font-bold leading-none tracking-tight font-serif">
+            {agent.name.length > 18 ? agent.name.split(" ")[0] : agent.name.split("—")[0].trim()}
+          </h2>
+          {ratingDisplay && (
+            <span className="text-white text-[28px] font-light leading-none ml-1">
+              {ratingDisplay}
+            </span>
+          )}
+          {agent.certified && (
+            <span className="ml-0.5">
+              <VerifiedBadge />
+            </span>
+          )}
+        </div>
+
+        {/* Category pill + icons */}
+        <div className="flex items-center gap-2 mt-2">
+          <span className="inline-flex items-center gap-1.5 border border-orange-400/60 bg-orange-500/10 text-white text-xs font-medium px-3 py-1 rounded-full">
+            <span className="text-orange-300">📋</span> {agent.category}
+          </span>
+          {agent.reviewCount > 0 && (
+            <span className="inline-flex items-center gap-1 text-white/50 text-xs">
+              <StarIcon /> {agent.reviewCount}
+            </span>
+          )}
+          {agent.messagingEnabled && (
+            <span className="text-white/30 text-xs">💬</span>
+          )}
+          {agent.locallyOwned && (
+            <span className="text-white/30 text-xs">🏠</span>
+          )}
+        </div>
+
+        {/* Arrow up button */}
+        <div className="absolute bottom-4 right-4">
+          <button
+            onClick={(e) => {
+              if (isDragging) return;
+              e.stopPropagation();
+              onViewProfile();
+            }}
+            data-tutorial-target="profile"
+            className="opacity-80 hover:opacity-100 transition-opacity active:scale-90"
+            aria-label="View full profile"
+          >
+            <ArrowUpCircle />
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ═══════════════════════════════════════════
+   Main DeckView Component
+   ═══════════════════════════════════════════ */
 export default function DeckView() {
   const vm = useDeckViewModel();
   const filters = useFiltersViewModel(() => {
     console.log("[deck] filters applied, would reload deck");
   });
   const [showTutorial, setShowTutorial] = useState(() => shouldShowTutorial());
+  const [cardKey, setCardKey] = useState(0); // force re-mount on swipe
 
   /* ── loading state ── */
   if (vm.loading) {
@@ -122,30 +358,31 @@ export default function DeckView() {
   }
 
   const agent = vm.current!;
+  const nextAgent = vm.agents[vm.currentIndex + 1] ?? null;
   const total = vm.agents.length;
   const idx = vm.currentIndex;
 
-  /* ── card animation class ── */
-  const animClass =
-    vm.animatingDirection === "left"
-      ? "animate-swipe-left"
-      : vm.animatingDirection === "right"
-        ? "animate-swipe-right"
-        : "";
+  /* ── Swipe handlers that re-mount card ── */
+  const handleSwipeLeft = () => {
+    vm.onPass();
+    setCardKey(k => k + 1);
+  };
+
+  const handleSwipeRight = () => {
+    vm.onSave();
+    setCardKey(k => k + 1);
+  };
 
   /* ── dot indicators ── */
   const maxDots = 7;
   const dotStart = Math.max(0, Math.min(idx - Math.floor(maxDots / 2), total - maxDots));
   const dotEnd = Math.min(total, dotStart + maxDots);
 
-  /* ── Rating display ── */
-  const ratingDisplay = agent.rating > 0 ? agent.rating.toFixed(1) : null;
-
   return (
     <div className="flex flex-col h-[100dvh] bg-[#121212] overflow-hidden pb-[82px]">
 
       {/* ══════════════════════════════════════════════
-          TOP BANNER — "Learning your type" style
+          TOP BANNER — "Learning your type"
           ══════════════════════════════════════════════ */}
       <div className="flex-shrink-0 px-3 pt-2 pb-1 z-10">
         <div className="flex items-center gap-3 bg-white/[0.95] rounded-xl px-3.5 py-2.5 shadow-sm">
@@ -191,95 +428,34 @@ export default function DeckView() {
       </div>
 
       {/* ══════════════════════════════════════════════
-          FULL-SCREEN PHOTO CARD
+          SWIPEABLE CARD STACK
           ══════════════════════════════════════════════ */}
       <div className="flex-1 relative mx-2 overflow-hidden rounded-2xl min-h-0" data-tutorial-target="card">
-        {/* next card peek */}
-        {idx + 1 < total && (
-          <div className="absolute inset-x-1 inset-y-1 rounded-2xl bg-white/[0.03] border border-white/5 scale-[0.97] -z-10" />
+        {/* Next card (behind) */}
+        {nextAgent && (
+          <SwipeableCard
+            key={`bg-${nextAgent.id}`}
+            agent={nextAgent}
+            onSwipeLeft={() => {}}
+            onSwipeRight={() => {}}
+            onViewProfile={() => {}}
+            isTop={false}
+          />
         )}
 
-        {/* active card */}
-        <div
-          key={agent.id}
-          className={`absolute inset-0 rounded-2xl overflow-hidden ${animClass}`}
-        >
-          {/* photo fills entire card */}
-          <img
-            src={agent.photoUrl}
-            alt={agent.name}
-            className="absolute inset-0 w-full h-full object-cover"
-            onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-              (e.target as HTMLImageElement).src =
-                `https://ui-avatars.com/api/?name=${encodeURIComponent(agent.name)}&size=600&background=1a1a2e&color=fff&font-size=0.33&bold=true`;
-            }}
-          />
-
-          {/* gradient — bottom heavy like Hinge */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
-
-          {/* ── Bottom info overlay ── */}
-          <div className="absolute bottom-0 left-0 right-0 px-4 pb-4">
-            
-            {/* Active badge */}
-            <div className="mb-2">
-              <span className="inline-block bg-green-500 text-white text-[10px] font-bold px-2.5 py-[3px] rounded-md uppercase tracking-wide">
-                Active
-              </span>
-            </div>
-
-            {/* Name + Rating + Verified — single line like "P 27 ✓" */}
-            <div className="flex items-center gap-1.5">
-              <h2 className="text-white text-[32px] font-bold leading-none tracking-tight font-serif">
-                {agent.name.length > 18 ? agent.name.split(" ")[0] : agent.name.split("—")[0].trim()}
-              </h2>
-              {ratingDisplay && (
-                <span className="text-white text-[28px] font-light leading-none ml-1">
-                  {ratingDisplay}
-                </span>
-              )}
-              {agent.certified && (
-                <span className="ml-0.5">
-                  <VerifiedBadge />
-                </span>
-              )}
-            </div>
-
-            {/* Category pill + service icons — like zodiac row */}
-            <div className="flex items-center gap-2 mt-2">
-              <span className="inline-flex items-center gap-1.5 border border-orange-400/60 bg-orange-500/10 text-white text-xs font-medium px-3 py-1 rounded-full">
-                <span className="text-orange-300">📋</span> {agent.category}
-              </span>
-              {agent.reviewCount > 0 && (
-                <span className="inline-flex items-center gap-1 text-white/50 text-xs">
-                  <StarIcon /> {agent.reviewCount}
-                </span>
-              )}
-              {agent.messagingEnabled && (
-                <span className="text-white/30 text-xs">💬</span>
-              )}
-              {agent.locallyOwned && (
-                <span className="text-white/30 text-xs">🏠</span>
-              )}
-            </div>
-
-            {/* ── Arrow up button (right side) ── */}
-            <div className="absolute bottom-4 right-4">
-              <button
-                onClick={vm.onViewProfile}
-                data-tutorial-target="profile"
-                className="opacity-80 hover:opacity-100 transition-opacity active:scale-90"
-                aria-label="View full profile"
-              >
-                <ArrowUpCircle />
-              </button>
-            </div>
-          </div>
-        </div>
+        {/* Active draggable card */}
+        <SwipeableCard
+          key={`card-${agent.id}-${cardKey}`}
+          agent={agent}
+          onSwipeLeft={handleSwipeLeft}
+          onSwipeRight={handleSwipeRight}
+          onViewProfile={vm.onViewProfile}
+          isTop={true}
+        />
       </div>
 
       {/* ══════════════════════════════════════════════
-          BIO + VIEW MORE — below the card
+          BIO + VIEW MORE
           ══════════════════════════════════════════════ */}
       <div className="flex-shrink-0 px-4 pt-3 pb-1">
         <p className="text-white/60 text-[13px] leading-relaxed line-clamp-2">
@@ -296,7 +472,7 @@ export default function DeckView() {
       </div>
 
       {/* ══════════════════════════════════════════════
-          CTA PILL — "NEW  Request a Quote"
+          CTA PILL
           ══════════════════════════════════════════════ */}
       <div className="flex-shrink-0 px-4 pt-2 pb-1">
         <button
@@ -311,12 +487,11 @@ export default function DeckView() {
       </div>
 
       {/* ══════════════════════════════════════════════
-          ACTION BUTTONS — ✕ (pass) and 💚 (save)
+          ACTION BUTTONS — ✕ and 💚
           ══════════════════════════════════════════════ */}
       <div className="flex-shrink-0 flex items-center justify-center gap-14 pt-2 pb-2 px-6">
-        {/* Pass — dark circle with pink X */}
         <button
-          onClick={vm.onPass}
+          onClick={handleSwipeLeft}
           data-tutorial-target="pass"
           className="w-[58px] h-[58px] rounded-full bg-white/[0.08] border border-white/10 flex items-center justify-center text-rose-400 hover:bg-rose-500/15 active:scale-90 transition-all"
           aria-label="Pass"
@@ -324,9 +499,8 @@ export default function DeckView() {
           <XIcon />
         </button>
 
-        {/* Save — dark circle with green heart */}
         <button
-          onClick={vm.onSave}
+          onClick={handleSwipeRight}
           data-tutorial-target="like"
           className="w-[58px] h-[58px] rounded-full bg-white/[0.08] border border-white/10 flex items-center justify-center text-green-400 hover:bg-green-500/15 active:scale-90 transition-all"
           aria-label="Like"
@@ -342,18 +516,6 @@ export default function DeckView() {
       {showTutorial && (
         <DeckTutorialOverlay onComplete={() => setShowTutorial(false)} />
       )}
-
-      {/* ── Swipe animations ── */}
-      <style>{`
-        @keyframes swipeLeft {
-          to { transform: translateX(-120%) rotate(-12deg); opacity: 0; }
-        }
-        @keyframes swipeRight {
-          to { transform: translateX(120%) rotate(12deg); opacity: 0; }
-        }
-        .animate-swipe-left { animation: swipeLeft 0.35s ease-out forwards; }
-        .animate-swipe-right { animation: swipeRight 0.35s ease-out forwards; }
-      `}</style>
     </div>
   );
 }
