@@ -158,6 +158,7 @@ export default function DeckView() {
           </div>
           <button
             onClick={filters.onOpen}
+            data-tutorial-target="filters"
             className="text-gray-400 hover:text-gray-600 transition-colors p-1"
             aria-label="Filters"
           >
@@ -192,7 +193,7 @@ export default function DeckView() {
       {/* ══════════════════════════════════════════════
           FULL-SCREEN PHOTO CARD
           ══════════════════════════════════════════════ */}
-      <div className="flex-1 relative mx-2 overflow-hidden rounded-2xl min-h-0">
+      <div className="flex-1 relative mx-2 overflow-hidden rounded-2xl min-h-0" data-tutorial-target="card">
         {/* next card peek */}
         {idx + 1 < total && (
           <div className="absolute inset-x-1 inset-y-1 rounded-2xl bg-white/[0.03] border border-white/5 scale-[0.97] -z-10" />
@@ -266,6 +267,7 @@ export default function DeckView() {
             <div className="absolute bottom-4 right-4">
               <button
                 onClick={vm.onViewProfile}
+                data-tutorial-target="profile"
                 className="opacity-80 hover:opacity-100 transition-opacity active:scale-90"
                 aria-label="View full profile"
               >
@@ -315,6 +317,7 @@ export default function DeckView() {
         {/* Pass — dark circle with pink X */}
         <button
           onClick={vm.onPass}
+          data-tutorial-target="pass"
           className="w-[58px] h-[58px] rounded-full bg-white/[0.08] border border-white/10 flex items-center justify-center text-rose-400 hover:bg-rose-500/15 active:scale-90 transition-all"
           aria-label="Pass"
         >
@@ -324,6 +327,7 @@ export default function DeckView() {
         {/* Save — dark circle with green heart */}
         <button
           onClick={vm.onSave}
+          data-tutorial-target="like"
           className="w-[58px] h-[58px] rounded-full bg-white/[0.08] border border-white/10 flex items-center justify-center text-green-400 hover:bg-green-500/15 active:scale-90 transition-all"
           aria-label="Like"
         >
