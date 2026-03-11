@@ -283,16 +283,16 @@ function SwipeableCard({ agent, onSwipeLeft, onSwipeRight, onViewProfile, isTop 
           )}
         </div>
 
-        {/* Arrow up button */}
+        {/* Arrow up button — onPointerDown stops drag from stealing the tap */}
         <div className="absolute bottom-4 right-4">
           <button
+            onPointerDownCapture={(e) => e.stopPropagation()}
             onClick={(e) => {
-              if (isDragging) return;
               e.stopPropagation();
               onViewProfile();
             }}
             data-tutorial-target="profile"
-            className="opacity-80 hover:opacity-100 transition-opacity active:scale-90"
+            className="opacity-80 hover:opacity-100 transition-opacity active:scale-90 pointer-events-auto"
             aria-label="View full profile"
           >
             <ArrowUpCircle />
