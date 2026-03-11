@@ -34,7 +34,7 @@ export default function ChatView() {
           <img src={vm.agentPhotoUrl} alt="" className="w-9 h-9 rounded-full object-cover bg-white/10" />
         )}
         <div className="flex-1 min-w-0">
-          <h1 className="text-sm font-bold truncate">{vm.agentName || "Conversation"}</h1>
+          <h1 className="text-sm font-bold truncate font-sans">{vm.agentName || "Conversation"}</h1>
           {vm.status && (
             <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider ${statusColors[vm.status] ?? "bg-white/10 text-white/40"}`}>
               {vm.status.replace(/_/g, " ")}
