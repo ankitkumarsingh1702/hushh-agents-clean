@@ -1,0 +1,15 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/hushh-agents-web:$SHORT_SHA'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/hushh-agents-web:latest'
+      - '-f'
+      - 'apps/web/Dockerfile'
+      - '.'
+
+images:
+  - 'gcr.io/$PROJECT_ID/hushh-agents-web:$SHORT_SHA'
+  - 'gcr.io/$PROJECT_ID/hushh-agents-web:latest'
