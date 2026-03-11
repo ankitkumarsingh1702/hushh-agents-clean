@@ -23,7 +23,7 @@ export default function FiltersSheet({ vm }: { vm: FiltersVM }) {
 
         {/* ── Header ── */}
         <div className="flex items-center justify-between px-6 pb-5">
-          <h2 className="text-xl font-bold text-white tracking-tight">Filters & Sorting</h2>
+          <h2 className="text-xl font-bold text-white tracking-tight font-serif">Filters & Sorting</h2>
           <button onClick={vm.onReset} className="text-[13px] text-[#ff7eb3] font-medium">
             Reset to recommended
           </button>

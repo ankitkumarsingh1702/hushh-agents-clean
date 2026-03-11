@@ -85,7 +85,7 @@ export default function DeckView() {
         <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center mb-2">
           <span className="text-2xl">⚠️</span>
         </div>
-        <h3 className="text-white text-lg font-bold">Something went wrong</h3>
+        <h3 className="text-white text-lg font-bold font-serif">Something went wrong</h3>
         <p className="text-white/50 text-sm">{vm.error}</p>
         <button
           onClick={vm.onRetry}
@@ -104,7 +104,7 @@ export default function DeckView() {
         <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-2">
           <span className="text-4xl">🎉</span>
         </div>
-        <h2 className="text-white text-2xl font-bold">You've seen everyone!</h2>
+        <h2 className="text-white text-2xl font-bold font-serif">You've seen everyone!</h2>
         <p className="text-white/50 text-sm max-w-xs">
           Tap below to shuffle the deck and discover again.
         </p>
@@ -226,7 +226,7 @@ export default function DeckView() {
 
             {/* Name + Rating + Verified — single line like "P 27 ✓" */}
             <div className="flex items-center gap-1.5">
-              <h2 className="text-white text-[32px] font-bold leading-none tracking-tight" style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}>
+              <h2 className="text-white text-[32px] font-bold leading-none tracking-tight font-serif">
                 {agent.name.length > 18 ? agent.name.split(" ")[0] : agent.name.split("—")[0].trim()}
               </h2>
               {ratingDisplay && (
