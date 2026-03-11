@@ -130,43 +130,43 @@ export default function AgentProfileView() {
       <main className="flex-1 pt-16 pb-32 overflow-y-auto">
         <div className="w-full max-w-lg mx-auto">
 
-          {/* ── Hero Image — full bleed ── */}
-          <div className="relative w-full aspect-[3/4] overflow-hidden">
+          {/* ── Hero Image — compact with fallback ── */}
+          <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#1a1a2e]">
             <img
-              src={a.photoUrl}
+              src={a.photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(a.name)}&size=600&background=1a1a2e&color=fff&font-size=0.33&bold=true`}
               alt={a.name}
               className="w-full h-full object-cover"
               onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                 (e.target as HTMLImageElement).src =
-                  "https://via.placeholder.com/600x800?text=" + encodeURIComponent(a.name);
+                  `https://ui-avatars.com/api/?name=${encodeURIComponent(a.name)}&size=600&background=1a1a2e&color=fff&font-size=0.33&bold=true`;
               }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+          </div>
 
-            {/* Name overlay on image */}
-            <div className="absolute bottom-0 left-0 right-0 p-6">
-              {/* Active badge */}
-              <span className="inline-block bg-green-500/90 text-white text-[11px] font-semibold px-3 py-0.5 rounded-full mb-3">
-                {a.responseTime ? (a.responseTime === "fast" ? "Active now" : `Replies ${a.responseTime}`) : "Active"}
-              </span>
+          {/* ── Name + Info — always visible below image ── */}
+          <div className="px-5 pt-4 pb-2">
+            {/* Active badge */}
+            <span className="inline-block bg-green-500/90 text-white text-[11px] font-semibold px-3 py-0.5 rounded-full mb-2">
+              {a.responseTime ? (a.responseTime === "fast" ? "Active now" : `Replies ${a.responseTime}`) : "Active"}
+            </span>
 
-              <div className="flex items-center gap-2">
-                <h1 className="text-white text-3xl font-bold font-serif leading-none">{a.name}</h1>
-                {a.certified && <VerifiedBadge />}
-              </div>
-
-              {a.rating > 0 && (
-                <div className="flex items-center gap-2 mt-2">
-                  <span className="text-yellow-400 text-sm">★ {a.rating.toFixed(1)}</span>
-                  <span className="text-white/30 text-sm">·</span>
-                  <span className="text-white/50 text-sm">{a.reviewCount} reviews</span>
-                </div>
-              )}
-
-              <p className="text-white/40 text-sm mt-1.5">
-                📍 {a.city}, {a.state}
-              </p>
+            <div className="flex items-center gap-2">
+              <h1 className="text-white text-2xl font-bold font-serif leading-tight">{a.name}</h1>
+              {a.certified && <VerifiedBadge />}
             </div>
+
+            {a.rating > 0 && (
+              <div className="flex items-center gap-2 mt-1.5">
+                <span className="text-yellow-400 text-sm">★ {a.rating.toFixed(1)}</span>
+                <span className="text-white/30 text-sm">·</span>
+                <span className="text-white/50 text-sm">{a.reviewCount} reviews</span>
+              </div>
+            )}
+
+            <p className="text-white/50 text-sm mt-1">
+              📍 {a.city}, {a.state}
+            </p>
           </div>
 
           {/* ── Content cards ── */}
