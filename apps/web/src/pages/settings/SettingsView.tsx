@@ -11,14 +11,14 @@ export default function SettingsView() {
 
   if (vm.loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-[#1a0533] to-[#0d001a]">
+      <div className="flex items-center justify-center min-h-screen bg-brand-dark">
         <div className="animate-pulse text-white/60">Loading settings…</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1a0533] to-[#0d001a] text-white pb-32">
+    <div className="min-h-screen bg-brand-dark text-white pb-32">
       {/* header */}
       <div className="px-5 pt-12 pb-4">
         <HushhAgentHeading className="text-xl">{c.title}</HushhAgentHeading>
@@ -26,7 +26,7 @@ export default function SettingsView() {
 
       <div className="px-5 space-y-6">
         {/* ── Profile Card ── */}
-        <section className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+        <section className="bg-white/5 border border-white/10 rounded-custom p-4 space-y-3">
           <h2 className="text-xs text-white/40 uppercase tracking-wider">Profile</h2>
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center text-xl text-white/30 flex-shrink-0">
@@ -35,12 +35,12 @@ export default function SettingsView() {
               ) : (vm.data.profile.fullName?.charAt(0) || "?")}
             </div>
             <div className="flex-1 space-y-2">
-              <input value={vm.data.profile.fullName} onChange={e => vm.updateProfile("fullName", e.target.value)} placeholder="Full name" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#e6ff00]/30" />
+              <input value={vm.data.profile.fullName} onChange={e => vm.updateProfile("fullName", e.target.value)} placeholder="Full name" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-brand-primary/30" />
               <input value={vm.data.profile.email} disabled className="w-full bg-white/3 border border-white/5 rounded-xl px-3 py-2 text-sm text-white/40 cursor-not-allowed" />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-2">
-            <input value={vm.data.profile.zip} onChange={e => vm.updateProfile("zip", e.target.value)} placeholder="ZIP code" className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#e6ff00]/30" />
+            <input value={vm.data.profile.zip} onChange={e => vm.updateProfile("zip", e.target.value)} placeholder="ZIP code" className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-brand-primary/30" />
             <select value={vm.data.profile.contactPref} onChange={e => vm.updateProfile("contactPref", e.target.value)} className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none appearance-none">
               <option value="email">Email</option>
               <option value="phone">Phone</option>
@@ -50,7 +50,7 @@ export default function SettingsView() {
         </section>
 
         {/* ── Notifications ── */}
-        <section className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+        <section className="bg-white/5 border border-white/10 rounded-custom p-4 space-y-3">
           <h2 className="text-xs text-white/40 uppercase tracking-wider">Notifications</h2>
           <label className="flex items-center justify-between">
             <span className="text-sm text-white/70">Email alerts</span>
@@ -73,7 +73,7 @@ export default function SettingsView() {
         </section>
 
         {/* ── Privacy ── */}
-        <section className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+        <section className="bg-white/5 border border-white/10 rounded-custom p-4 space-y-3">
           <h2 className="text-xs text-white/40 uppercase tracking-wider">Privacy & Trust</h2>
           <label className="flex items-center justify-between">
             <span className="text-sm text-white/70">Data sharing</span>
@@ -97,7 +97,7 @@ export default function SettingsView() {
         </section>
 
         {/* ── Danger Zone ── */}
-        <section className="bg-red-500/5 border border-red-500/15 rounded-2xl p-4 space-y-3">
+        <section className="bg-red-500/5 border border-red-500/15 rounded-custom p-4 space-y-3">
           <h2 className="text-xs text-red-400/60 uppercase tracking-wider">Danger Zone</h2>
           <button onClick={vm.onOpenDeleteConfirm} className="w-full text-left bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-xs text-red-400 hover:bg-red-500/15">
             🗑 {c.deleteLabel}

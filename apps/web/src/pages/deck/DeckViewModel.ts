@@ -81,6 +81,15 @@ export function useDeckViewModel() {
     if (!current) return;
     setState(s => ({ ...s, animatingDirection: "right" }));
     recordAction("save");
+
+    // Track liked agents in localStorage for badge count + consistency (Bug 3 & 4)
+    try {
+      const liked: string[] = JSON.parse(localStorage.getItem("hushh_liked_agents") || "[]");
+      if (!liked.includes(current.id)) liked.push(current.id);
+      localStorage.setItem("hushh_liked_agents", JSON.stringify(liked));
+      window.dispatchEvent(new Event("hushh_liked_update"));
+    } catch { /* silent */ }
+
     setTimeout(() => {
       setState(s => ({ ...s, currentIndex: s.currentIndex + 1, animatingDirection: null }));
     }, 300);
