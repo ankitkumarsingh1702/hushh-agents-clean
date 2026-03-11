@@ -9,6 +9,13 @@ import DeckTutorialOverlay, { shouldShowTutorial } from "./DeckTutorialOverlay";
 import HushhAgentText from "../../components/HushhAgentText";
 
 /* ═══════════════════════════════════════════
+   Haptic feedback helper
+   ═══════════════════════════════════════════ */
+function haptic(pattern: number | number[] = 10) {
+  try { navigator?.vibrate?.(pattern); } catch { /* not supported */ }
+}
+
+/* ═══════════════════════════════════════════
    Constants
    ═══════════════════════════════════════════ */
 const SWIPE_THRESHOLD = 100;       // px drag to trigger swipe
@@ -307,12 +314,47 @@ export default function DeckView() {
   const [showTutorial, setShowTutorial] = useState(() => shouldShowTutorial());
   const [cardKey, setCardKey] = useState(0); // force re-mount on swipe
 
-  /* ── loading state ── */
+  /* ── loading state — shimmer skeleton ── */
   if (vm.loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen px-6 bg-[#121212]">
-        <div className="w-12 h-12 rounded-full border-2 border-green-400/30 border-t-green-400 animate-spin mb-4" />
-        <HushhAgentText size="sm" muted>Finding advisors for you…</HushhAgentText>
+      <div className="flex flex-col h-[100dvh] bg-[#121212] overflow-hidden pb-[82px]">
+        {/* Skeleton banner */}
+        <div className="flex-shrink-0 px-3 pt-2 pb-1">
+          <div className="flex items-center gap-3 bg-white/5 rounded-xl px-3.5 py-2.5 animate-pulse">
+            <div className="w-8 h-8 rounded-full bg-white/10" />
+            <div className="flex-1 space-y-1.5">
+              <div className="h-3 w-32 bg-white/10 rounded" />
+              <div className="h-2.5 w-48 bg-white/[0.06] rounded" />
+            </div>
+          </div>
+        </div>
+        {/* Skeleton dots */}
+        <div className="flex items-center justify-center gap-[5px] py-2">
+          {[...Array(5)].map((_, i) => <div key={i} className="w-[6px] h-[6px] rounded-full bg-white/10 animate-pulse" />)}
+        </div>
+        {/* Skeleton card */}
+        <div className="flex-1 mx-2 rounded-2xl bg-white/[0.04] animate-pulse relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.03] to-transparent skeleton-shimmer" />
+          <div className="absolute bottom-0 left-0 right-0 px-4 pb-4 space-y-3">
+            <div className="h-3 w-16 bg-white/10 rounded-md" />
+            <div className="h-8 w-40 bg-white/10 rounded" />
+            <div className="h-5 w-28 bg-white/[0.06] rounded-full" />
+          </div>
+        </div>
+        {/* Skeleton bio */}
+        <div className="px-4 pt-3 pb-1 space-y-1.5 animate-pulse">
+          <div className="h-3 w-full bg-white/[0.06] rounded" />
+          <div className="h-3 w-2/3 bg-white/[0.04] rounded" />
+        </div>
+        {/* Skeleton buttons */}
+        <div className="flex items-center justify-center gap-14 pt-4 pb-2 px-6">
+          <div className="w-[58px] h-[58px] rounded-full bg-white/[0.06] animate-pulse" />
+          <div className="w-[58px] h-[58px] rounded-full bg-white/[0.06] animate-pulse" />
+        </div>
+        <style>{`
+          @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+          .skeleton-shimmer { animation: shimmer 1.5s ease-in-out infinite; }
+        `}</style>
       </div>
     );
   }
@@ -362,13 +404,15 @@ export default function DeckView() {
   const total = vm.agents.length;
   const idx = vm.currentIndex;
 
-  /* ── Swipe handlers that re-mount card ── */
+  /* ── Swipe handlers with haptic feedback ── */
   const handleSwipeLeft = () => {
+    haptic(15);
     vm.onPass();
     setCardKey(k => k + 1);
   };
 
   const handleSwipeRight = () => {
+    haptic([10, 30, 10]);
     vm.onSave();
     setCardKey(k => k + 1);
   };
@@ -490,23 +534,32 @@ export default function DeckView() {
           ACTION BUTTONS — ✕ and 💚
           ══════════════════════════════════════════════ */}
       <div className="flex-shrink-0 flex items-center justify-center gap-14 pt-2 pb-2 px-6">
-        <button
+        <motion.button
           onClick={handleSwipeLeft}
           data-tutorial-target="pass"
-          className="w-[58px] h-[58px] rounded-full bg-white/[0.08] border border-white/10 flex items-center justify-center text-rose-400 hover:bg-rose-500/15 active:scale-90 transition-all"
+          className="w-[58px] h-[58px] rounded-full bg-white/[0.08] border border-white/10 flex items-center justify-center text-rose-400 hover:bg-rose-500/15 transition-all"
           aria-label="Pass"
+          whileTap={{
+            scale: 0.85,
+            rotate: [0, -8, 8, -5, 5, 0],
+            transition: { rotate: { duration: 0.4 }, scale: { duration: 0.1 } },
+          }}
         >
           <XIcon />
-        </button>
+        </motion.button>
 
-        <button
+        <motion.button
           onClick={handleSwipeRight}
           data-tutorial-target="like"
-          className="w-[58px] h-[58px] rounded-full bg-white/[0.08] border border-white/10 flex items-center justify-center text-green-400 hover:bg-green-500/15 active:scale-90 transition-all"
+          className="w-[58px] h-[58px] rounded-full bg-white/[0.08] border border-white/10 flex items-center justify-center text-green-400 hover:bg-green-500/15 transition-all"
           aria-label="Like"
+          whileTap={{
+            scale: [1, 1.3, 0.9, 1.15, 1],
+            transition: { duration: 0.5, ease: "easeInOut" },
+          }}
         >
           <HeartIcon />
-        </button>
+        </motion.button>
       </div>
 
       {/* ── Filters sheet ── */}
