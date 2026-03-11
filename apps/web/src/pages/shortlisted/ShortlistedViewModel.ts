@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import type { ShortlistedAgent, ShortlistedState, FilterStatus, SortBy } from "./ShortlistedModel";
 import { supabase } from "../../lib/supabase";
+import { useAuthGate } from "../../lib/useAuthGate";
 
 function trackEvent(event: string, data?: Record<string, unknown>) {
   console.log(`[analytics] ${event}`, data ?? "");
@@ -11,11 +12,14 @@ function trackEvent(event: string, data?: Record<string, unknown>) {
 
 export function useShortlistedViewModel() {
   const navigate = useNavigate();
+  const { requireAuth } = useAuthGate();
   const [state, setState] = useState<ShortlistedState>({
     agents: [], loading: true, error: null, filterStatus: "all", sortBy: "newest", editMode: false,
   });
 
   useEffect(() => {
+    // Auth gate: redirect to login if not authenticated
+    if (!requireAuth()) return;
     trackEvent("shortlist_viewed");
     loadShortlisted();
   }, []);

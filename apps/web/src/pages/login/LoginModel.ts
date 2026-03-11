@@ -4,11 +4,11 @@
 export function getLoginContent() {
   return {
     headerTitle: "Sign in",
-    title: "Use your work email",
+    title: "Enter your email",
     supportCopy:
-      "We'll send a one-time code to your Google Workspace inbox. Only approved domains or allowed emails can continue.",
-    fieldLabel: "Work email",
-    placeholder: "name@company.com",
+      "We'll send a one-time code to your inbox to verify your identity.",
+    fieldLabel: "Enter your email",
+    placeholder: "name@email.com",
     helperText:
       "Use the email address you want to receive advisor updates on.",
     ctaLabel: "Send code",
@@ -16,7 +16,7 @@ export function getLoginContent() {
     loadingPhase1: "Checking workspace…",
     loadingPhase2: "Sending code…",
     validation: {
-      invalid: "Enter a valid work email address.",
+      invalid: "Enter a valid email address.",
       unsupported: "This email is not enabled for Hushh Agents yet.",
     },
   };

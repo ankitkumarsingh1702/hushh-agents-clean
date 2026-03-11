@@ -4,14 +4,20 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Conversation, MessagesState, MessageFilter } from "./MessagesModel";
 import { supabase } from "../../lib/supabase";
+import { useAuthGate } from "../../lib/useAuthGate";
 
 export function useMessagesViewModel() {
   const navigate = useNavigate();
+  const { requireAuth } = useAuthGate();
   const [state, setState] = useState<MessagesState>({
     conversations: [], loading: true, error: null, filter: "all", totalUnread: 0, waitingOnYou: 0,
   });
 
-  useEffect(() => { loadConversations(); }, []);
+  useEffect(() => {
+    // Auth gate: redirect to login if not authenticated
+    if (!requireAuth()) return;
+    loadConversations();
+  }, []);
 
   async function loadConversations() {
     setState(s => ({ ...s, loading: true }));
