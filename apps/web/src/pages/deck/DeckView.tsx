@@ -1,8 +1,10 @@
 /* ── Deck View ── Pixel-perfect Hinge-style card UI ── */
 
+import { useState } from "react";
 import { useDeckViewModel } from "./DeckViewModel";
 import { useFiltersViewModel } from "./FiltersViewModel";
 import FiltersSheet from "./FiltersSheet";
+import DeckTutorialOverlay, { shouldShowTutorial } from "./DeckTutorialOverlay";
 import HushhAgentText from "../../components/HushhAgentText";
 
 /* ── Inline SVG icons ── */
@@ -67,6 +69,7 @@ export default function DeckView() {
   const filters = useFiltersViewModel(() => {
     console.log("[deck] filters applied, would reload deck");
   });
+  const [showTutorial, setShowTutorial] = useState(() => shouldShowTutorial());
 
   /* ── loading state ── */
   if (vm.loading) {
@@ -330,6 +333,11 @@ export default function DeckView() {
 
       {/* ── Filters sheet ── */}
       <FiltersSheet vm={filters} />
+
+      {/* ── First-time tutorial overlay ── */}
+      {showTutorial && (
+        <DeckTutorialOverlay onComplete={() => setShowTutorial(false)} />
+      )}
 
       {/* ── Swipe animations ── */}
       <style>{`
