@@ -5,7 +5,9 @@ import { getSettingsContent } from "./SettingsModel";
 import HushhAgentHeading from "../../components/HushhAgentHeading";
 import HushhAgentText from "../../components/HushhAgentText";
 import HushhAgentCTA from "../../components/HushhAgentCTA";
+import { useNavigate } from "react-router-dom";
 import HushhAgentFooter from "../../components/HushhAgentFooter";
+import { resetTutorial } from "../deck/DeckTutorialOverlay";
 
 /* ── Duo-tone SVG Icons (matching onboarding style) ── */
 function UserIcon() {
@@ -206,6 +208,7 @@ function SectionCard({ title, children }: { title: string; children: React.React
 export default function SettingsView() {
   const vm = useSettingsViewModel();
   const content = getSettingsContent();
+  const navigate = useNavigate();
 
   if (vm.loading) {
     return (
@@ -354,6 +357,26 @@ export default function SettingsView() {
             {vm.exportRequested && (
               <p className="text-xs text-emerald-400 py-2 pl-8">Export downloaded!</p>
             )}
+          </SectionCard>
+
+          {/* ── Section: Support ── */}
+          <SectionCard title="Support">
+            <button
+              onClick={() => { resetTutorial(); navigate("/deck"); }}
+              className="flex items-center gap-3 w-full py-3.5 text-left group"
+            >
+              <span className="text-brand-primary group-hover:text-white transition-colors">
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  <circle cx="12" cy="17" r="1" fill="currentColor" />
+                </svg>
+              </span>
+              <span className="text-sm text-white/70 font-medium group-hover:text-white transition-colors">Replay Tutorial</span>
+              <svg className="w-4 h-4 ml-auto text-white/30 group-hover:text-white/60 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
           </SectionCard>
 
           {/* ── Section: Account Actions ── */}
