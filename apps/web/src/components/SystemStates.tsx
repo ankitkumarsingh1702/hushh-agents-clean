@@ -45,7 +45,7 @@ export function UnsupportedEmail() {
       <div className="text-4xl">✉️</div>
       <HushhAgentHeading className="text-base">This email isn't enabled yet</HushhAgentHeading>
       <HushhAgentText className="text-white/40 text-sm">
-        Use another work email or contact your admin.
+        Use another email or contact support.
       </HushhAgentText>
     </div>
   );

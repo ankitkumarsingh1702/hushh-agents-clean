@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { getDefaultSettings, type SettingsData, type SettingsState } from "./SettingsModel";
 import { supabase } from "../../lib/supabase";
+import { useAuthGate } from "../../lib/useAuthGate";
 
 function trackEvent(event: string, data?: Record<string, unknown>) {
   console.log(`[analytics] ${event}`, data ?? "");
@@ -59,6 +60,7 @@ function loadOnboardingDefaults(): Partial<SettingsData> {
 
 export function useSettingsViewModel() {
   const navigate = useNavigate();
+  const { requireAuth } = useAuthGate();
   const [state, setState] = useState<SettingsState>({
     data: getDefaultSettings(),
     loading: true,
@@ -71,6 +73,8 @@ export function useSettingsViewModel() {
   });
 
   useEffect(() => {
+    // Auth gate: redirect to login if not authenticated
+    if (!requireAuth()) return;
     trackEvent("settings_viewed");
     loadSettings();
   }, []);

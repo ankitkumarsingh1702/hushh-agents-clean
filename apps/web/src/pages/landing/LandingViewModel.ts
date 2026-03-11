@@ -25,18 +25,18 @@ export function useLandingViewModel() {
     trackEvent("landing_view");
   }, []);
 
-  // Edge case: If user returns with a valid session, bypass S1
+  // Edge case: If user returns with a valid session, bypass landing → go to deck
   useEffect(() => {
-    const session = localStorage.getItem("hushh_session");
-    if (session) {
-      // User has a valid session — bypass landing, route to post-auth state
-      navigate("/login/email", { replace: true });
+    const email = localStorage.getItem("hushh_user_email");
+    if (email) {
+      navigate("/deck", { replace: true });
     }
   }, [navigate]);
 
   const onContinue = useCallback(() => {
     trackEvent("cta_continue_clicked");
-    navigate("/login/email");
+    // Go straight to deck — user can browse without auth
+    navigate("/deck");
   }, [navigate]);
 
   const onLogin = useCallback(() => {

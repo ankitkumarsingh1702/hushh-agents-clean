@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import type { LeadTrackerState } from "./LeadTrackerModel";
 import { supabase } from "../../lib/supabase";
+import { useAuthGate } from "../../lib/useAuthGate";
 
 function trackEvent(event: string, data?: Record<string, unknown>) {
   console.log(`[analytics] ${event}`, data ?? "");
@@ -11,11 +12,14 @@ function trackEvent(event: string, data?: Record<string, unknown>) {
 
 export function useLeadTrackerViewModel() {
   const navigate = useNavigate();
+  const { requireAuth } = useAuthGate();
   const [state, setState] = useState<LeadTrackerState>({
     leads: [], loading: true, error: null, selectedLeadId: null,
   });
 
   useEffect(() => {
+    // Auth gate: redirect to login if not authenticated
+    if (!requireAuth()) return;
     trackEvent("lead_status_viewed");
     loadLeads();
   }, []);

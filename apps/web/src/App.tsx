@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import LandingView from "./pages/landing/LandingView";
 import ComponentLibraryView from "./pages/component-library/ComponentLibraryView";
 import LoginView from "./pages/login/LoginView";
@@ -22,7 +22,7 @@ export default function App() {
   return (
     <Routes>
       {/* ── Public / Auth / Onboarding (no bottom tabs) ── */}
-      <Route path="/" element={<LandingView />} />
+      <Route path="/welcome" element={<LandingView />} />
       <Route path="/login/email" element={<LoginView />} />
       <Route path="/login/verify" element={<VerifyView />} />
       <Route path="/onboarding/welcome" element={<WelcomeView />} />
@@ -32,6 +32,9 @@ export default function App() {
       <Route path="/onboarding/notifications" element={<NotificationsView />} />
       <Route path="/onboarding/ready" element={<ReadyView />} />
       <Route path="/components" element={<ComponentLibraryView />} />
+
+      {/* ── Root → Deck (agent browsing is the default experience) ── */}
+      <Route path="/" element={<Navigate to="/deck" replace />} />
 
       {/* ── Main App (with bottom tab navigation) ── */}
       <Route element={<AppShell />}>

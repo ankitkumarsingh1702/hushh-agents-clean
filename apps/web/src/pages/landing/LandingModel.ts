@@ -62,7 +62,7 @@ export function getHeroContent() {
     headline: "Find the right advisor in minutes.",
     subheadline:
       "Browse verified Kirkland-area financial and insurance professionals matched to your goals, communication style, and location.",
-    ctaLabel: "Continue with work email",
+    ctaLabel: "Continue with email",
     secondaryCta: "Log in",
   };
 }
