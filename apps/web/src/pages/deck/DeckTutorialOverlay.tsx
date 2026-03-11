@@ -1,11 +1,61 @@
 /* ── Deck Tutorial Overlay ── First-time user walkthrough ── */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 
 const STORAGE_KEY = "hushh_deck_tutorial_seen";
 
+/* ── Monotone filled SVG icons ── */
+function SwipeIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M9 3a1 1 0 012 0v8.586l4.293-4.293a1 1 0 011.414 1.414L12 13.414V21a1 1 0 11-2 0v-7.586l-4.707-4.707a1 1 0 011.414-1.414L9 11.586V3z" />
+    </svg>
+  );
+}
+
+function XCircleIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+      <path fillRule="evenodd" d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm-1.293 5.293a1 1 0 011.414 0L12 9.172l-.879-.879a1 1 0 011.758 0L12 9.172l.879-.879a1 1 0 111.414 1.414L13.414 12l.879.879-.879.879L12 14.828l-1.879-1.879-.879-.879.879-.879L9.172 12l-.879-.879a1 1 0 010-1.414l.879.879L12 7.172l-.879-.879z" clipRule="evenodd" />
+    </svg>
+  );
+}
+
+function HeartFillIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+    </svg>
+  );
+}
+
+function UserProfileIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+      <path fillRule="evenodd" d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zM8.5 9.5a3.5 3.5 0 117 0 3.5 3.5 0 01-7 0zM12 14c-3.033 0-5.685 1.648-7.106 4.097A9.96 9.96 0 0012 22a9.96 9.96 0 007.106-3.903C17.685 15.648 15.033 14 12 14z" clipRule="evenodd" />
+    </svg>
+  );
+}
+
+function FilterIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M3 5a1 1 0 011-1h16a1 1 0 110 2H4a1 1 0 01-1-1zm3 7a1 1 0 011-1h10a1 1 0 110 2H7a1 1 0 01-1-1zm3 7a1 1 0 011-1h4a1 1 0 110 2h-4a1 1 0 01-1-1z" />
+    </svg>
+  );
+}
+
+/* ── Gesture hand icon (monotone, filled) ── */
+function TapHandIcon({ size = 28 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="white">
+      <path d="M12 1a2 2 0 00-2 2v8.333L7.2 9.6a2 2 0 00-2.8 2.857l5.657 5.657A6 6 0 0014 20h1a5 5 0 005-5v-4a2 2 0 00-4 0v-1a2 2 0 00-4 0V3a2 2 0 00-2-2z" opacity="0.9" />
+    </svg>
+  );
+}
+
 interface TutorialStep {
-  icon: string;
+  icon: ReactNode;
   title: string;
   description: string;
   highlight: "card" | "pass" | "like" | "profile" | "filters";
@@ -14,35 +64,35 @@ interface TutorialStep {
 
 const steps: TutorialStep[] = [
   {
-    icon: "👆",
+    icon: <SwipeIcon />,
     title: "Discover Advisors",
     description: "Browse through curated advisor profiles. Each card shows their specialty, rating, and availability.",
     highlight: "card",
     gesture: "swipe",
   },
   {
-    icon: "❌",
+    icon: <XCircleIcon />,
     title: "Not a match? Pass.",
     description: "Tap the ✕ button to skip this advisor and move to the next one.",
     highlight: "pass",
     gesture: "tap-left",
   },
   {
-    icon: "💚",
+    icon: <HeartFillIcon />,
     title: "Found a fit? Save!",
-    description: "Tap the 💚 to shortlist this advisor. You can review all saved advisors in your Likes tab.",
+    description: "Tap the heart to shortlist this advisor. You can review all saved advisors in your Likes tab.",
     highlight: "like",
     gesture: "tap-right",
   },
   {
-    icon: "📋",
+    icon: <UserProfileIcon />,
     title: "View Full Profile",
-    description: "Tap the ↑ arrow or 'View more' to see detailed info, reviews, services & request a quote.",
+    description: "Tap the arrow or 'View more' to see detailed info, reviews, services & request a quote.",
     highlight: "profile",
     gesture: "tap-up",
   },
   {
-    icon: "⚙️",
+    icon: <FilterIcon />,
     title: "Filter & Sort",
     description: "Use filters to narrow down by specialty, rating, response time, and availability.",
     highlight: "filters",
@@ -124,27 +174,27 @@ export default function DeckTutorialOverlay({ onComplete }: { onComplete: () => 
       <div className="absolute inset-0 pointer-events-none">
         {current.gesture === "swipe" && (
           <div className="absolute top-[38%] left-[50%] -translate-x-1/2">
-            <div className="animate-tutorial-swipe text-4xl">👆</div>
+            <div className="animate-tutorial-swipe"><TapHandIcon size={36} /></div>
           </div>
         )}
         {current.gesture === "tap-left" && (
           <div className="absolute bottom-[108px] left-[calc(50%-86px)]">
-            <div className="animate-tutorial-tap text-3xl">👆</div>
+            <div className="animate-tutorial-tap"><TapHandIcon size={32} /></div>
           </div>
         )}
         {current.gesture === "tap-right" && (
           <div className="absolute bottom-[108px] right-[calc(50%-86px)]">
-            <div className="animate-tutorial-tap text-3xl">👆</div>
+            <div className="animate-tutorial-tap"><TapHandIcon size={32} /></div>
           </div>
         )}
         {current.gesture === "tap-up" && (
           <div className="absolute bottom-[208px] right-[24px]">
-            <div className="animate-tutorial-tap text-2xl">👆</div>
+            <div className="animate-tutorial-tap"><TapHandIcon size={26} /></div>
           </div>
         )}
         {current.gesture === "tap-top" && (
           <div className="absolute top-[16px] right-[24px]">
-            <div className="animate-tutorial-tap text-2xl">👆</div>
+            <div className="animate-tutorial-tap"><TapHandIcon size={26} /></div>
           </div>
         )}
       </div>
@@ -178,7 +228,9 @@ export default function DeckTutorialOverlay({ onComplete }: { onComplete: () => 
         <div className="bg-white/[0.97] rounded-2xl px-5 py-5 shadow-2xl mx-auto max-w-sm">
           {/* Icon + Title */}
           <div className="flex items-center gap-3 mb-2">
-            <span className="text-2xl">{current.icon}</span>
+            <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0 text-green-600">
+              {current.icon}
+            </div>
             <h3 className="text-gray-900 text-lg font-bold font-serif">{current.title}</h3>
           </div>
 
@@ -210,7 +262,14 @@ export default function DeckTutorialOverlay({ onComplete }: { onComplete: () => 
               onClick={(e) => { e.stopPropagation(); handleNext(); }}
               className="bg-green-500 text-white text-sm font-semibold px-5 py-2 rounded-full active:scale-95 transition-transform flex items-center gap-1.5"
             >
-              {isLast ? "Let's Go! 🚀" : (
+              {isLast ? (
+                <>
+                  Let's Go!
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                  </svg>
+                </>
+              ) : (
                 <>
                   Next
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
